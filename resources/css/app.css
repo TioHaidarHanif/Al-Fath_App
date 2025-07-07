@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-main-bg text-text-primary font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold;
+  }
+  
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl mb-6;
+  }
+  
+  h2 {
+    @apply text-3xl md:text-4xl mb-5;
+  }
+  
+  h3 {
+    @apply text-2xl md:text-3xl mb-4;
+  }
+  
+  a {
+    @apply text-accent-2 hover:text-accent-4 transition-colors duration-300;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply px-6 py-2 rounded-lg font-medium transition-all duration-300 inline-flex items-center justify-center;
+  }
+  
+  .btn-primary {
+    @apply btn bg-accent-2 text-white hover:bg-accent-4 shadow-md hover:shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-accent-1 text-text-primary hover:bg-accent-3 shadow-md hover:shadow-lg;
+  }
+  
+  .btn-accent {
+    @apply btn bg-accent-5 text-white hover:bg-accent-4 shadow-md hover:shadow-lg;
+  }
+  
+  .btn-outline {
+    @apply btn border-2 border-accent-2 text-accent-2 hover:bg-accent-2 hover:text-white;
+  }
+  
+  /* Cards */
+  .card {
+    @apply bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 transition-shadow duration-300 hover:shadow-lg;
+  }
+  
+  .card-accent {
+    @apply border-l-4 border-accent-1;
+  }
+  
+  /* Form elements */
+  .form-input {
+    @apply rounded-lg border-gray-300 focus:border-accent-2 focus:ring focus:ring-accent-2 focus:ring-opacity-30;
+  }
+  
+  /* Containers with proper spacing */
+  .container-fluid {
+    @apply px-4 md:px-8 lg:px-12 max-w-7xl mx-auto;
+  }
+  
+  /* Sections with proper spacing */
+  .section {
+    @apply py-12 md:py-16 lg:py-24;
+  }
+}
+
+@layer utilities {
+  /* Emphasis */
+  .emphasis {
+    @apply relative;
+  }
+  
+  .emphasis::after {
+    @apply content-[''] absolute -bottom-1 left-0 h-1 w-full bg-accent-1 opacity-70 rounded;
+  }
+  
+  /* Balanced grid layouts */
+  .grid-balanced {
+    @apply grid gap-6 md:grid-cols-2 lg:grid-cols-3;
+  }
+  
+  /* Hover effects for movement */
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-1;
+  }
+  
+  /* Contrast utilities */
+  .text-contrast {
+    @apply text-text-secondary font-semibold;
+  }
+  
+  /* For creating proportional padding based on width */
+  .aspect-padding {
+    @apply relative pb-[56.25%];
+  }
+  
+  .aspect-content {
+    @apply absolute inset-0;
+  }
+  
+  /* Soft gradient backgrounds */
+  .bg-gradient-soft {
+    @apply bg-gradient-to-br from-soft-1/30 to-soft-2/30;
+  }
+}
