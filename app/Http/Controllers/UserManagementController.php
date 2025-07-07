@@ -130,7 +130,7 @@ class UserManagementController extends Controller
             Storage::disk('public')->delete($user->profile->photo);
         }
         $user->delete();
-        return redirect()->route('user-management.index')->with('success', 'User deleted successfully');
+        return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }
 
     // Delete only a profile (not the user)

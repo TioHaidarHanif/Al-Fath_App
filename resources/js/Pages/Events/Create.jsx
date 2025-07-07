@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
@@ -7,6 +7,8 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import InputError from '@/Components/InputError';
 import TextArea from '@/Components/TextArea';
 import Checkbox from '@/Components/Checkbox';
+import Breadcrumbs from '@/Components/Breadcrumbs';
+import ActionButton from '@/Components/ActionButton';
 
 export default function Create({ auth }) {
     const [imagePreview, setImagePreview] = useState(null);
@@ -52,8 +54,36 @@ export default function Create({ auth }) {
         >
             <Head title="Create Event" />
 
-            <div className="py-12">
+            <div className="py-6">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <Breadcrumbs 
+                        items={[
+                            { name: 'Events', href: route('events.index') },
+                            { name: 'Create Event' },
+                        ]} 
+                    />
+                    
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-2xl font-bold text-text-primary">Create New Event</h1>
+                        <div className="flex gap-2">
+                            <ActionButton
+                                as="link"
+                                href={route('events.index')}
+                                color="secondary"
+                            >
+                                Back to Events
+                            </ActionButton>
+                            
+                            <ActionButton
+                                as="link"
+                                href={route('events.my')}
+                                color="secondary"
+                            >
+                                My Events
+                            </ActionButton>
+                        </div>
+                    </div>
+                    
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <form onSubmit={handleSubmit}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

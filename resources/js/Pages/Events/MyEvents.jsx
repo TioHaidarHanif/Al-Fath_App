@@ -4,11 +4,14 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { format } from 'date-fns';
 import PrimaryButton from '@/Components/PrimaryButton';
 import Tab from '@/Components/Tab';
+import Breadcrumbs from '@/Components/Breadcrumbs';
+import ActionButton from '@/Components/ActionButton';
 
 export default function MyEvents({ auth, createdEvents, managedEvents, registeredEvents }) {
     const [activeTab, setActiveTab] = useState('created');
+    const isMember = auth.user?.role === 'member' || auth.user?.role === 'admin';
 
-    const renderEventCard = (event) => (
+    const renderEventCard = (event, role) => (
         <div key={event.id} className="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
             <div className="h-40 bg-gray-200 overflow-hidden">
                 {event.image_path ? (
@@ -49,8 +52,41 @@ export default function MyEvents({ auth, createdEvents, managedEvents, registere
         >
             <Head title="My Events" />
 
-            <div className="py-12">
+            <div className="py-6">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <Breadcrumbs 
+                        items={[
+                            { name: 'Events', href: route('events.index') },
+                            { name: 'My Events' },
+                        ]} 
+                    />
+                    
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-2xl font-bold text-text-primary">My Events</h1>
+                        <div className="flex gap-2">
+                            {isMember && (
+                                <ActionButton
+                                    as="link"
+                                    href={route('events.create')}
+                                    color="primary"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                                    </svg>
+                                    Create Event
+                                </ActionButton>
+                            )}
+                            
+                            <ActionButton
+                                as="link"
+                                href={route('events.index')}
+                                color="secondary"
+                            >
+                                All Events
+                            </ActionButton>
+                        </div>
+                    </div>
+
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div className="flex justify-between items-center mb-6">
                             <div className="flex space-x-1 border-b">

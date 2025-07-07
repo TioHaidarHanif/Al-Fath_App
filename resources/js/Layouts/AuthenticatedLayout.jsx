@@ -6,6 +6,8 @@ import { Link } from '@inertiajs/react';
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const isAdmin = user?.role === 'admin';
+    const isMember = user?.role === 'member' || isAdmin;
 
     return (
         <div className="min-h-screen bg-main-bg flex flex-col">
@@ -19,10 +21,81 @@ export default function Authenticated({ user, header, children }) {
                                 </Link>
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div className="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex items-center">
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')} className="text-white hover:text-accent-1">
                                     Dashboard
                                 </NavLink>
+                                
+                                {/* Events Dropdown */}
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <span className="inline-flex rounded-md">
+                                            <button
+                                                type="button"
+                                                className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white hover:text-accent-1 focus:outline-none transition ease-in-out duration-150 ${route().current('events.*') ? 'text-accent-1' : ''}`}
+                                            >
+                                                Events
+                                                <svg
+                                                    className="ms-2 -me-0.5 h-4 w-4"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </Dropdown.Trigger>
+
+                                    <Dropdown.Content width="48">
+                                        <Dropdown.Link href={route('events.index')}>All Events</Dropdown.Link>
+                                        <Dropdown.Link href={route('events.my')}>My Events</Dropdown.Link>
+                                        {isMember && (
+                                            <Dropdown.Link href={route('events.create')}>Create Event</Dropdown.Link>
+                                        )}
+                                    </Dropdown.Content>
+                                </Dropdown>
+
+                                {/* Admin Panel (Only visible to admins) */}
+                                {isAdmin && (
+                                    <Dropdown>
+                                        <Dropdown.Trigger>
+                                            <span className="inline-flex rounded-md">
+                                                <button
+                                                    type="button"
+                                                    className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white hover:text-accent-1 focus:outline-none transition ease-in-out duration-150 ${route().current('admin.*') || route().current('users.*') ? 'text-accent-1' : ''}`}
+                                                >
+                                                    Admin Panel
+                                                    <svg
+                                                        className="ms-2 -me-0.5 h-4 w-4"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 20 20"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                            clipRule="evenodd"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </Dropdown.Trigger>
+
+                                        <Dropdown.Content width="48">
+                                            <Dropdown.Link href={route('admin.dashboard')}>Admin Dashboard</Dropdown.Link>
+                                            <Dropdown.Link href={route('users.index')}>User Management</Dropdown.Link>
+                                            <Dropdown.Link href={route('admin.events')}>Event Management</Dropdown.Link>
+                                            <Dropdown.Link href={route('admin.logging')}>Activity Logs</Dropdown.Link>
+                                        </Dropdown.Content>
+                                    </Dropdown>
+                                )}
+                                
+                          
                             </div>
                         </div>
 
@@ -54,7 +127,7 @@ export default function Authenticated({ user, header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
-                                        <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>My Profile</Dropdown.Link>
                                         <Dropdown.Link href={route('profile.qrcode')}>
                                             Show QR Code
                                         </Dropdown.Link>
@@ -97,6 +170,48 @@ export default function Authenticated({ user, header, children }) {
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')} className="text-white hover:text-accent-1">
                             Dashboard
                         </ResponsiveNavLink>
+                        
+                        {/* Mobile Events Navigation */}
+                        <div className="border-l-4 border-transparent pl-4 py-1 mb-1 text-white font-semibold">
+                            Events
+                        </div>
+                        <ResponsiveNavLink href={route('events.index')} active={route().current('events.index')} className="text-white hover:text-accent-1 pl-8">
+                            All Events
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('events.my')} active={route().current('events.my')} className="text-white hover:text-accent-1 pl-8">
+                            My Events
+                        </ResponsiveNavLink>
+                        {isMember && (
+                            <ResponsiveNavLink href={route('events.create')} active={route().current('events.create')} className="text-white hover:text-accent-1 pl-8">
+                                Create Event
+                            </ResponsiveNavLink>
+                        )}
+                        
+                        {/* Mobile Admin Panel */}
+                        {isAdmin && (
+                            <>
+                                <div className="border-l-4 border-transparent pl-4 py-1 mb-1 mt-2 text-white font-semibold">
+                                    Admin Panel
+                                </div>
+                                <ResponsiveNavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')} className="text-white hover:text-accent-1 pl-8">
+                                    Admin Dashboard
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('users.index')} active={route().current('users.index')} className="text-white hover:text-accent-1 pl-8">
+                                    User Management
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('admin.events')} active={route().current('admin.events')} className="text-white hover:text-accent-1 pl-8">
+                                    Event Management
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('admin.logging')} active={route().current('admin.logging')} className="text-white hover:text-accent-1 pl-8">
+                                    Activity Logs
+                                </ResponsiveNavLink>
+                            </>
+                        )}
+                        
+                        {/* Mobile Profile Management */}
+                        <ResponsiveNavLink href={route('users.index')} active={route().current('users.*')} className="text-white hover:text-accent-1 mt-2">
+                            Profile Management Kocak
+                        </ResponsiveNavLink>
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-text-secondary/30">
@@ -106,7 +221,7 @@ export default function Authenticated({ user, header, children }) {
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')} className="text-white hover:text-accent-1">Profile</ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('profile.edit')} className="text-white hover:text-accent-1">My Profile</ResponsiveNavLink>
                             <ResponsiveNavLink href={route('profile.qrcode')} className="text-white hover:text-accent-1">
                                 Show QR Code
                             </ResponsiveNavLink>

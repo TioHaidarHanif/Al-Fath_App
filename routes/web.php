@@ -42,9 +42,6 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('StyleGuide');
     })->name('style.guide');
     // Profile Management Routes
-Route::post('profile-management/{profileManagement}', [\App\Http\Controllers\ProfileManagementController::class, 'update'])
-    ->name('profile-management.update');
-    Route::resource('profile-management', \App\Http\Controllers\ProfileManagementController::class);
 
     // QR Code Route
     Route::get('/profile/qrcode', function () {
@@ -55,15 +52,29 @@ Route::post('profile-management/{profileManagement}', [\App\Http\Controllers\Pro
 
 // Only admins can access
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    // Admin Dashboard
+    Route::get('/', function () {
+        return Inertia::render('Admin/Dashboard');
+    })->name('admin.dashboard');
+    
+    // User Management Routes
     Route::post('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'update'])
     ->name('users.update');
     Route::get('/users/create', [\App\Http\Controllers\UserManagementController::class, 'create'])
-    ->name('/users.create');
+    ->name('users.create');
     Route::get('/users/{user}', [\App\Http\Controllers\UserManagementController::class, 'show'])
-    ->name('/users.show');
+    ->name('users.show');
     Route::resource('/users', \App\Http\Controllers\UserManagementController::class);
     Route::delete('/profile/{profile}', [\App\Http\Controllers\UserManagementController::class, 'destroyProfile'])->name('user-management.profile.destroy');
+    
+    // Activity Logging
     Route::get('/logging', [\App\Http\Controllers\Admin\UserActivityController::class, 'index'])->name('admin.logging');
+    
+    // Events Management Overview
+    Route::get('/events', function () {
+        return Inertia::render('Admin/Events');
+    })->name('admin.events');
+    
     // admin routes here
 });
 
