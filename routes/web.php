@@ -39,6 +39,8 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('StyleGuide');
     })->name('style.guide');
     // Profile Management Routes
+Route::post('profile-management/{profileManagement}', [\App\Http\Controllers\ProfileManagementController::class, 'update'])
+    ->name('profile-management.update');
     Route::resource('profile-management', \App\Http\Controllers\ProfileManagementController::class);
 });
 

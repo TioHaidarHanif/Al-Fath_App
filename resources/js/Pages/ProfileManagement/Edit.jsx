@@ -7,7 +7,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
 export default function Edit({ auth, profile }) {
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         nim: profile.nim || '',
         fakultas: profile.fakultas || '',
         prodi: profile.prodi || '',
@@ -22,12 +22,14 @@ export default function Edit({ auth, profile }) {
     const [photoPreview, setPhotoPreview] = useState(profile.photo ? `/storage/${profile.photo}` : null);
     
     const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        put(route('profile-management.update', profile.id), {
-            forceFormData: true,
-        });
-    };
+    e.preventDefault();
+    post(route('profile-management.update', profile.id), {
+        ...data,
+        _method: 'put',
+    }, {
+        forceFormData: true,
+    });
+};
     
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];

@@ -7,6 +7,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
+
+
 
 class ProfileManagementController extends Controller
 {
@@ -81,6 +84,7 @@ class ProfileManagementController extends Controller
      */
     public function edit(Profile $profileManagement)
     {
+        
         $profileManagement->load('user');
         
         return Inertia::render('ProfileManagement/Edit', [
@@ -93,6 +97,11 @@ class ProfileManagementController extends Controller
      */
     public function update(Request $request, Profile $profileManagement)
     {
+        
+       Log::info('Updating profile', [
+            'user_id' => $request,
+            'profile_id' => $profileManagement->id
+        ]  );
         $validated = $request->validate([
             'nim' => 'required|string|unique:profiles,nim,' . $profileManagement->id,
             'fakultas' => 'required|string',
