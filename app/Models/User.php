@@ -51,4 +51,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class);
     }
+    
+    /**
+     * Get the amalan entries for the user.
+     */
+    public function amalanEntries()
+    {
+        return $this->hasMany(AmalanEntry::class);
+    }
 }

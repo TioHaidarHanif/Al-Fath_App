@@ -38,6 +38,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/style-guide', function () {
         return Inertia::render('StyleGuide');
     })->name('style.guide');
+      Route::resource('amalan-yaumiyah', \App\Http\Controllers\AmalanEntryController::class);
+    Route::get('amalan-yaumiyah-bulk', [\App\Http\Controllers\AmalanEntryController::class, 'bulkEntry'])->name('amalan-yaumiyah.bulk');
+    Route::post('amalan-yaumiyah-bulk', [\App\Http\Controllers\AmalanEntryController::class, 'storeBulk'])->name('amalan-yaumiyah.storeBulk');
+    Route::post('amalan-yaumiyah-bulk-day', [\App\Http\Controllers\AmalanEntryController::class, 'storeBulkDay'])->name('amalan-yaumiyah.storeBulkDay');
+    Route::get('amalan-statistics', [\App\Http\Controllers\AmalanStatisticsController::class, 'userStats'])->name('amalan-statistics');
     // Profile Management Routes
 Route::post('profile-management/{profileManagement}', [\App\Http\Controllers\ProfileManagementController::class, 'update'])
     ->name('profile-management.update');
@@ -48,12 +53,16 @@ Route::post('profile-management/{profileManagement}', [\App\Http\Controllers\Pro
 // Only admins can access
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/logging', [\App\Http\Controllers\Admin\UserActivityController::class, 'index'])->name('admin.logging');
-    // admin routes here
+    
+    // Amalan Yaumiyah Management for Admins
+    Route::resource('admin/amalan-questions', \App\Http\Controllers\Admin\AmalanQuestionController::class, ['as' => 'admin']);
+    Route::get('admin/amalan-statistics', [\App\Http\Controllers\Admin\AmalanQuestionController::class, 'statistics'])->name('admin.amalan-statistics');
 });
 
 // Only members can access
 Route::middleware(['auth', 'role:member'])->group(function () {
-    // member routes here
+    // Amalan Yaumiyah for Members
+  
 });
 
 require __DIR__.'/auth.php';

@@ -23,6 +23,33 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')} className="text-white hover:text-accent-1">
                                     Dashboard
                                 </NavLink>
+                                
+                                {/* Amalan Yaumiyah Links for Members */}
+                                {user.role === 'member' && (
+                                    <>
+                                        <NavLink href={route('amalan-yaumiyah.index')} active={route().current('amalan-yaumiyah.index')} className="text-white hover:text-accent-1">
+                                            Amalan Yaumiyah
+                                        </NavLink>
+                                        <NavLink href={route('amalan-yaumiyah.bulk')} active={route().current('amalan-yaumiyah.bulk')} className="text-white hover:text-accent-1">
+                                            Bulk Entry
+                                        </NavLink>
+                                        <NavLink href={route('amalan-statistics')} active={route().current('amalan-statistics')} className="text-white hover:text-accent-1">
+                                            My Statistics
+                                        </NavLink>
+                                    </>
+                                )}
+                                
+                                {/* Amalan Yaumiyah Links for Admins */}
+                                {user.role === 'admin' && (
+                                    <>
+                                        <NavLink href={route('admin.amalan-questions.index')} active={route().current('admin.amalan-questions.index')} className="text-white hover:text-accent-1">
+                                            Manage Questions
+                                        </NavLink>
+                                        <NavLink href={route('admin.amalan-statistics')} active={route().current('admin.amalan-statistics')} className="text-white hover:text-accent-1">
+                                            User Statistics
+                                        </NavLink>
+                                    </>
+                                )}
                             </div>
                         </div>
 
@@ -94,6 +121,33 @@ export default function Authenticated({ user, header, children }) {
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')} className="text-white hover:text-accent-1">
                             Dashboard
                         </ResponsiveNavLink>
+                        
+                        {/* Amalan Yaumiyah Links for Members */}
+                        {user.role === 'member' && (
+                            <>
+                                <ResponsiveNavLink href={route('amalan-yaumiyah.index')} active={route().current('amalan-yaumiyah.index')} className="text-white hover:text-accent-1">
+                                    Amalan Yaumiyah
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('amalan-yaumiyah.bulk')} active={route().current('amalan-yaumiyah.bulk')} className="text-white hover:text-accent-1">
+                                    Bulk Entry
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('amalan-statistics')} active={route().current('amalan-statistics')} className="text-white hover:text-accent-1">
+                                    My Statistics
+                                </ResponsiveNavLink>
+                            </>
+                        )}
+                        
+                        {/* Amalan Yaumiyah Links for Admins */}
+                        {user.role === 'admin' && (
+                            <>
+                                <ResponsiveNavLink href={route('admin.amalan-questions.index')} active={route().current('admin.amalan-questions.index')} className="text-white hover:text-accent-1">
+                                    Manage Questions
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('admin.amalan-statistics')} active={route().current('admin.amalan-statistics')} className="text-white hover:text-accent-1">
+                                    User Statistics
+                                </ResponsiveNavLink>
+                            </>
+                        )}
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-text-secondary/30">
