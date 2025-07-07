@@ -8,6 +8,7 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Models\Profile;
 use App\Observers\ProfileObserver;
+use App\Listeners\AuthEventSubscriber;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,9 @@ class EventServiceProvider extends ServiceProvider
         Profile::class => [
             ProfileObserver::class,
         ],
+        User::class => [
+            \App\Observers\UserObserver::class,
+        ],
     ];
 
     /**
@@ -33,7 +37,8 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        parent::boot();
+        \Illuminate\Support\Facades\Event::subscribe(AuthEventSubscriber::class);
     }
 
     /**

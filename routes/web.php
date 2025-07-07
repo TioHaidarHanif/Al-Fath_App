@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/create', [ProfileController::class, 'storeProfile'])->name('profile.store.details');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
+    
     // Style Guide Route
     Route::get('/style-guide', function () {
         return Inertia::render('StyleGuide');
@@ -53,8 +54,16 @@ Route::post('profile-management/{profileManagement}', [\App\Http\Controllers\Pro
 
 
 // Only admins can access
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/logging', [\App\Http\Controllers\Admin\UserActivityController::class, 'index'])->name('admin.logging');
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    Route::post('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'update'])
+    ->name('users.update');
+    Route::get('/users/create', [\App\Http\Controllers\UserManagementController::class, 'create'])
+    ->name('/users.create');
+    Route::get('/users/{user}', [\App\Http\Controllers\UserManagementController::class, 'show'])
+    ->name('/users.show');
+    Route::resource('/users', \App\Http\Controllers\UserManagementController::class);
+    Route::delete('/profile/{profile}', [\App\Http\Controllers\UserManagementController::class, 'destroyProfile'])->name('user-management.profile.destroy');
+    Route::get('/logging', [\App\Http\Controllers\Admin\UserActivityController::class, 'index'])->name('admin.logging');
     // admin routes here
 });
 
