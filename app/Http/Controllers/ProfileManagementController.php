@@ -14,6 +14,18 @@ use Illuminate\Support\Facades\Log;
 class ProfileManagementController extends Controller
 {
     /**
+     * Create a new controller instance.
+     */
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!auth()->user() || !auth()->user()->isAdmin()) {
+                abort(403, 'Unauthorized action.');
+            }
+            return $next($request);
+        });
+    }
+    /**
      * Display a listing of the resource.
      */
     public function index()

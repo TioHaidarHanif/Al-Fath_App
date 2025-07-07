@@ -55,6 +55,9 @@ export default function Authenticated({ user, header, children }) {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.qrcode')}>
+                                            Show QR Code
+                                        </Dropdown.Link>
                                         <Dropdown.Link href={route('logout')} method="post" as="button">
                                             Log Out
                                         </Dropdown.Link>
@@ -104,6 +107,9 @@ export default function Authenticated({ user, header, children }) {
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')} className="text-white hover:text-accent-1">Profile</ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('profile.qrcode')} className="text-white hover:text-accent-1">
+                                Show QR Code
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('logout')} as="button" className="text-white hover:text-accent-1">
                                 Log Out
                             </ResponsiveNavLink>

@@ -32,6 +32,8 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/details', [ProfileController::class, 'updateProfile'])->name('profile.update.details');
+    Route::post('/profile/create', [ProfileController::class, 'storeProfile'])->name('profile.store.details');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // Style Guide Route
@@ -42,6 +44,11 @@ Route::middleware('auth')->group(function () {
 Route::post('profile-management/{profileManagement}', [\App\Http\Controllers\ProfileManagementController::class, 'update'])
     ->name('profile-management.update');
     Route::resource('profile-management', \App\Http\Controllers\ProfileManagementController::class);
+
+    // QR Code Route
+    Route::get('/profile/qrcode', function () {
+        return Inertia::render('Profile/ShowQRCode');
+    })->name('profile.qrcode');
 });
 
 

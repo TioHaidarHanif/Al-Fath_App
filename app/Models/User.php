@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Profile;
 
 class User extends Authenticatable
 {
@@ -22,13 +23,14 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'qr_code',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
-     */
+     */ 
     protected $hidden = [
         'password',
         'remember_token',
@@ -49,6 +51,17 @@ class User extends Authenticatable
      */
     public function profile()
     {
+        
         return $this->hasOne(Profile::class);
+    }
+    
+    /**
+     * Check if the user is an admin.
+     *
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
     }
 }
