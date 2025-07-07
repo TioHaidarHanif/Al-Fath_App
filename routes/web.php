@@ -47,7 +47,7 @@ Route::post('profile-management/{profileManagement}', [\App\Http\Controllers\Pro
 
 // Only admins can access
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    
+    Route::get('/admin/logging', [\App\Http\Controllers\Admin\UserActivityController::class, 'index'])->name('admin.logging');
     // admin routes here
 });
 
