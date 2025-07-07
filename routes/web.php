@@ -38,9 +38,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/style-guide', function () {
         return Inertia::render('StyleGuide');
     })->name('style.guide');
-    
     // Profile Management Routes
     Route::resource('profile-management', \App\Http\Controllers\ProfileManagementController::class);
+});
+
+
+// Only admins can access
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    
+    // admin routes here
+});
+
+// Only members can access
+Route::middleware(['auth', 'role:member'])->group(function () {
+    // member routes here
 });
 
 require __DIR__.'/auth.php';
