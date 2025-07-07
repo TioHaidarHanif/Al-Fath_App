@@ -14,7 +14,7 @@ class UserObserver
     public function created(User $user): void
     {
         UserActivity::create([
-            'user_id' => Auth::id(),
+            'user_id' => Auth::id()?? null, // Use Auth::id() if available, otherwise null
             'action' => 'created',
             'resource_type' => 'user',
             'resource_id' => $user->id,

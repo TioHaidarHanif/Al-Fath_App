@@ -20,7 +20,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['admin', 'member'])->default('member')->after('email');
-            
+$table->string('qr_code')->unique()->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
