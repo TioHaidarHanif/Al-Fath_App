@@ -38,6 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/style-guide', function () {
         return Inertia::render('StyleGuide');
     })->name('style.guide');
+    
+    // Profile Management Routes
+    Route::resource('profile-management', \App\Http\Controllers\ProfileManagementController::class);
 });
 
 require __DIR__.'/auth.php';
