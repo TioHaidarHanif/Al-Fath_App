@@ -68,8 +68,38 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 });
 
 // Only members can access
-Route::middleware(['auth', 'role:member'])->group(function () {
-    // member routes here
+Route::middleware(['auth'])->group(function () {
+    // Event routes
+    Route::get('/events/my-events', [App\Http\Controllers\EventController::class, 'myEvents'])->name('events.my');
+    Route::get('/events/{event}/register', [App\Http\Controllers\EventRegistrationController::class, 'create'])->name('events.register');
+    Route::post('/events/{event}/register', [App\Http\Controllers\EventRegistrationController::class, 'store'])->name('events.register.store');
+    Route::delete('/events/{event}/register', [App\Http\Controllers\EventRegistrationController::class, 'cancel'])->name('events.register.cancel');
+    
+    // Events (create only available to members)
+    Route::get('/events/create', [App\Http\Controllers\EventController::class, 'create'])->name('events.create');
+    Route::post('/events', [App\Http\Controllers\EventController::class, 'store'])->name('events.store');
+
+    // PIC management (protected by event.pic middleware in the controller)
+    Route::get('/events/{event}/pics', [App\Http\Controllers\EventController::class, 'managePics'])->name('events.pics');
+    Route::post('/events/{event}/pics', [App\Http\Controllers\EventController::class, 'updatePics'])->name('events.pics.update');
+    
+    // Registration management (protected by event.pic middleware in the controller)
+    Route::get('/events/{event}/registrations', [App\Http\Controllers\EventRegistrationController::class, 'index'])->name('events.registrations.index');
+    Route::get('/events/{event}/registrations/{registration}', [App\Http\Controllers\EventRegistrationController::class, 'show'])->name('events.registrations.show');
+    Route::post('/events/{event}/registrations/{registration}', [App\Http\Controllers\EventRegistrationController::class, 'update'])->name('events.registrations.update');
+    Route::delete('/events/{event}/registrations/{registration}', [App\Http\Controllers\EventRegistrationController::class, 'destroy'])->name('events.registrations.destroy');
+    Route::post('/events/{event}/registrations/batch', [App\Http\Controllers\EventRegistrationController::class, 'batchUpdate'])->name('events.registrations.batch');
+});
+
+// Public event routes
+Route::get('/events', [App\Http\Controllers\EventController::class, 'index'])->name('events.index');
+Route::get('/events/{event}', [App\Http\Controllers\EventController::class, 'show'])->name('events.show');
+
+// Protected event routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/events/{event}/edit', [App\Http\Controllers\EventController::class, 'edit'])->name('events.edit');
+    Route::post('/events/{event}', [App\Http\Controllers\EventController::class, 'update'])->name('events.update');
+    Route::delete('/events/{event}', [App\Http\Controllers\EventController::class, 'destroy'])->name('events.destroy');
 });
 
 require __DIR__.'/auth.php';

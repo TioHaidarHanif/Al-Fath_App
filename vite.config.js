@@ -13,4 +13,12 @@ export default defineConfig({
         }),
         react(),
     ],
+    resolve: {
+        alias: {
+            // This is the crucial part for your '@' alias
+            '@': '/resources/js', // Make sure this path is correct for your base alias
+            // Or if you only alias for components, it might be:
+            // '@/Components': '/resources/js/Components', // If you have a specific alias for Components
+        },
+    },
 });

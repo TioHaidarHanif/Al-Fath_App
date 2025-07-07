@@ -7,6 +7,7 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use App\Models\Profile;
+use App\Models\User;
 use App\Observers\ProfileObserver;
 use App\Listeners\AuthEventSubscriber;
 

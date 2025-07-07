@@ -20,6 +20,8 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "classnames": "^2.5.1",
+        "date-fns": "^4.1.0",
         "qrcode.react": "^4.2.0",
         "react-qrcode-logo": "^3.0.0"
     }

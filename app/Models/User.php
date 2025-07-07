@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Profile;
+use App\Models\Event;
+use App\Models\EventRegistration;
 
 class User extends Authenticatable
 {
@@ -63,5 +65,41 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Get the events created by the user.
+     */
+    public function createdEvents()
+    {
+        return $this->hasMany(Event::class, 'creator_id');
+    }
+
+    /**
+     * Get the events where the user is a PIC.
+     */
+    public function managedEvents()
+    {
+        return $this->belongsToMany(Event::class, 'event_pics')
+            ->withPivot('is_creator')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the events the user has registered for.
+     */
+    public function registeredEvents()
+    {
+        return $this->belongsToMany(Event::class, 'event_registrations')
+            ->withPivot('status', 'form_data', 'notes')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get all event registrations for this user.
+     */
+    public function eventRegistrations()
+    {
+        return $this->hasMany(EventRegistration::class);
     }
 }
