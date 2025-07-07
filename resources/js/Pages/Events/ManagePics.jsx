@@ -3,33 +3,29 @@ import { Head, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputError from '@/Components/InputError';
-import Checkbox from '@/Components/Checkbox';
+import TextArea from '@/Components/TextArea';
+import InputLabel from '@/Components/InputLabel';
 
 export default function ManagePics({ auth, event, availableUsers }) {
+    const [emailInput, setEmailInput] = useState('');
     const { data, setData, post, processing, errors } = useForm({
-        pic_ids: event.pics.filter(pic => !pic.pivot.is_creator).map(pic => pic.id),
+        emails: '',
+        remove_pic_ids: [],
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setData('emails', emailInput);
         post(route('events.pics.update', event.id), {
             preserveScroll: true,
         });
     };
 
-    const handleTogglePIC = (userId) => {
-        const currentPics = [...data.pic_ids];
-        const index = currentPics.indexOf(userId);
-
-        if (index > -1) {
-            // Remove from the list
-            currentPics.splice(index, 1);
-        } else {
-            // Add to the list
-            currentPics.push(userId);
-        }
-
-        setData('pic_ids', currentPics);
+    const handleRemovePic = (userId) => {
+        setData('remove_pic_ids', [...data.remove_pic_ids, userId]);
+        post(route('events.pics.update', event.id), {
+            preserveScroll: true,
+        });
     };
 
     // Find the creator for special highlighting
@@ -47,72 +43,63 @@ export default function ManagePics({ auth, event, availableUsers }) {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h2 className="text-2xl font-semibold mb-4">{event.name}</h2>
                         <p className="text-gray-600 mb-6">
-                            Assign additional Person in Charge (PIC) to help manage this event. PICs can edit event details, 
-                            manage registrations, and oversee the event.
+                            Assign additional Person in Charge (PIC) by entering their email(s). PICs can edit event details, manage registrations, and oversee the event.
                         </p>
 
                         <form onSubmit={handleSubmit}>
                             <div className="mb-6">
-                                <h3 className="text-lg font-medium mb-2">Current PICs</h3>
-                                <div className="space-y-2">
-                                    {/* Creator (always listed and cannot be removed) */}
-                                    <div className="flex items-center p-3 bg-blue-50 rounded-lg">
-                                        <div className="flex-1">
-                                            <span className="font-medium">{creator.name}</span>
-                                            <span className="ml-2 inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                                Creator
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Current PICs that can be managed */}
-                                    {event.pics
-                                        .filter(pic => !pic.pivot.is_creator)
-                                        .map(pic => (
-                                            <div key={pic.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                                                <div className="flex-1">
-                                                    <span className="font-medium">{pic.name}</span>
-                                                </div>
-                                                <Checkbox
-                                                    name={`pic_${pic.id}`}
-                                                    checked={data.pic_ids.includes(pic.id)}
-                                                    onChange={() => handleTogglePIC(pic.id)}
-                                                />
-                                            </div>
-                                        ))}
-                                </div>
+                                <InputLabel htmlFor="emails" value="Add PICs by Email (comma or newline separated)" />
+                                <TextArea
+                                    id="emails"
+                                    name="emails"
+                                    value={emailInput}
+                                    onChange={e => setEmailInput(e.target.value)}
+                                    className="mt-1 block w-full"
+                                    rows={3}
+                                    placeholder="user1@email.com, user2@email.com or one per line"
+                                />
+                                <InputError message={errors.emails} className="mt-2" />
                             </div>
-
-                            <div className="mb-6">
-                                <h3 className="text-lg font-medium mb-2">Available Users</h3>
-                                {availableUsers.length > 0 ? (
-                                    <div className="space-y-2">
-                                        {availableUsers.map(user => (
-                                            <div key={user.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                                                <div className="flex-1">
-                                                    <span className="font-medium">{user.name}</span>
-                                                </div>
-                                                <Checkbox
-                                                    name={`pic_${user.id}`}
-                                                    checked={data.pic_ids.includes(user.id)}
-                                                    onChange={() => handleTogglePIC(user.id)}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="text-gray-500">No additional users available to assign as PICs.</p>
-                                )}
-                            </div>
-
-                            <InputError message={errors.pic_ids} className="mt-2" />
-
-                            <div className="flex justify-end">
+                            <div className="flex justify-end mb-8">
                                 <PrimaryButton type="submit" disabled={processing}>
-                                    Save Changes
+                                    Add PICs
                                 </PrimaryButton>
                             </div>
                         </form>
+
+                        <div className="mb-6">
+                            <h3 className="text-lg font-medium mb-2">Current PICs</h3>
+                            <div className="space-y-2">
+                                {/* Creator (always listed and cannot be removed) */}
+                                <div className="flex items-center p-3 bg-blue-50 rounded-lg">
+                                    <div className="flex-1">
+                                        <span className="font-medium">{creator.name}</span>
+                                        <span className="ml-2 inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                            Creator
+                                        </span>
+                                    </div>
+                                </div>
+                                {/* Other PICs with remove button */}
+                                {event.pics
+                                    .filter(pic => !pic.pivot.is_creator)
+                                    .map(pic => (
+                                        <div key={pic.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                                            <div className="flex-1">
+                                                <span className="font-medium">{pic.name} ({pic.email})</span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemovePic(pic.id)}
+                                                className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
+                                                disabled={processing}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                        <InputError message={errors.remove_pic_ids} className="mt-2" />
                     </div>
                 </div>
             </div>

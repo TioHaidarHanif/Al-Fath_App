@@ -135,6 +135,8 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
+        $this->authorize('managePics', $event);
+        
         return Inertia::render('Events/Edit', [
             'event' => $event,
         ]);
@@ -179,6 +181,8 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
+        // $this->authorize('managePics', $event);
+
         // Check if user is creator or admin
         if (!$event->isCreator(Auth::user()) && !Auth::user()->isAdmin()) {
             return redirect()->back()->with('error', 'You are not authorized to delete this event.');
@@ -228,29 +232,47 @@ class EventController extends Controller
         }
 
         $validated = $request->validate([
-            'pic_ids' => 'array',
-            'pic_ids.*' => 'exists:users,id',
+            'emails' => 'nullable|string',
+            'remove_pic_ids' => 'nullable|array',
+            'remove_pic_ids.*' => 'exists:users,id',
         ]);
 
-        // Get the current PICs
-        $currentPics = $event->pics()->where('is_creator', false)->get();
-        $currentPicIds = $currentPics->pluck('id')->toArray();
-        
-        // Determine which PICs to add and which to remove
-        $newPicIds = $validated['pic_ids'] ?? [];
-        $picsToAdd = array_diff($newPicIds, $currentPicIds);
-        $picsToRemove = array_diff($currentPicIds, $newPicIds);
-
-        // Add new PICs
-        foreach ($picsToAdd as $userId) {
-            $event->pics()->attach($userId, ['is_creator' => false]);
+        // Handle adding PICs by email
+        $added = [];
+        $errors = [];
+        if (!empty($validated['emails'])) {
+            $emails = preg_split('/[\s,]+/', $validated['emails'], -1, PREG_SPLIT_NO_EMPTY);
+            foreach ($emails as $email) {
+                $user = User::where('email', $email)->first();
+                if (!$user) {
+                    $errors[] = "User not found: $email";
+                    continue;
+                }
+                if ($event->pics()->where('user_id', $user->id)->exists()) {
+                    $errors[] = "$email is already a PIC";
+                    continue;
+                }
+                $event->pics()->attach($user->id, ['is_creator' => false]);
+                $added[] = $email;
+            }
         }
 
-        // Remove PICs
-        $event->pics()->detach($picsToRemove);
+        // Handle removing PICs
+        if (!empty($validated['remove_pic_ids'])) {
+            foreach ($validated['remove_pic_ids'] as $userId) {
+                // Don't allow removing the creator
+                if ($event->creator_id == $userId) continue;
+                $event->pics()->detach($userId);
+            }
+        }
 
-        return redirect()->route('events.show', $event)
-            ->with('success', 'Event PICs updated successfully.');
+        $message = [];
+        if ($added) $message[] = 'Added: ' . implode(', ', $added);
+        if ($errors) $message[] = 'Errors: ' . implode('; ', $errors);
+        if (!empty($validated['remove_pic_ids'])) $message[] = 'Removed selected PICs.';
+
+        return redirect()->route('events.pics', $event)
+            ->with('success', implode(' ', $message));
     }
 
     /**
