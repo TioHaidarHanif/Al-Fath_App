@@ -113,4 +113,16 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/events/{event}', [App\Http\Controllers\EventController::class, 'destroy'])->name('events.destroy');
 });
 
+// Blog routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/blogs/create', [\App\Http\Controllers\BlogController::class, 'create'])->name('blogs.create');
+    Route::post('/blogs', [\App\Http\Controllers\BlogController::class, 'store'])->name('blogs.store');
+    Route::get('/blogs/{id}/edit', [\App\Http\Controllers\BlogController::class, 'edit'])->name('blogs.edit');
+    Route::post('/blogs/{id}', [\App\Http\Controllers\BlogController::class, 'update'])->name('blogs.update');
+    Route::delete('/blogs/{id}', [\App\Http\Controllers\BlogController::class, 'destroy'])->name('blogs.destroy');
+});
+Route::get('/blogs', [\App\Http\Controllers\BlogController::class, 'index'])->name('blogs.index');
+Route::get('/blogs/{id}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blogs.show');
+
+
 require __DIR__.'/auth.php';
