@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Presence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -289,5 +290,79 @@ class EventController extends Controller
             'managedEvents' => $managedEvents,
             'registeredEvents' => $registeredEvents,
         ]);
+    }
+
+    /**
+     * Show all presences for a specific event.
+     */
+    public function presences(Event $event)
+    {
+        $this->authorize('view', $event); // Or your own logic for PIC/Admin
+
+        $event->load(['presences.user', 'presences.admin']);
+        return Inertia::render('Events/Presences', [
+            'event' => $event,
+            'presences' => $event->presences()->with(['user', 'admin'])->latest('scanned_at')->get(),
+        ]);
+    }
+
+    /**
+     * Show the QR scan page for this event.
+     */
+    public function scan(Event $event)
+    {
+        $this->authorize('view', $event); // Or your own logic for PIC/Admin
+
+        return Inertia::render('Events/ScanPresence', [
+            'event' => $event,
+        ]);
+    }
+
+    /**
+     * Handle a QR scan for this event.
+     */
+    public function processScan(Request $request, Event $event)
+    {
+
+        $request->validate([
+            'qr_code' => 'required|string',
+            'location' => 'nullable|string',
+        ]);
+        $event->load('registrations.user');
+
+        $admin = Auth::user();
+        $user = User::where('qr_code', $request->qr_code)->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Invalid QR code'], 404);
+        }
+        if (!$event->registrations()->where('user_id', $user->id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => "Maaf '{$user->name}' Sepertinya Anda belum terdaftar pada kegiatan '{$event->name}', silahkan lakukan pedaftaran  terlebih dahulu"
+            ], 400);
+        }
+
+        // Check if already present
+        // if (Presence::where('user_id', $user->id)->where('event_id', $event->id)->exists()) {
+        //     return response()->json(['success' => false, 'message' => 'Already marked present'], 400);
+        // }
+
+        $presence = Presence::create([
+            'user_id' => $user->id,
+            'admin_id' => $admin->id,
+            'event_id' => $event->id,
+            'scanned_at' => now(),
+            'location' => $request->location,
+            'ip_address' => $request->ip(),
+        ]);
+
+        $user->regenerateQrCode();
+        $registration = $event->registrations()->where('user_id', $user->id)->first();
+        if ($registration) {
+            $registration->status = 'attended';
+            $registration->save();
+        }
+
+        return response()->json(['success' => true, 'presence' => $presence, 'user' => $user]);
     }
 }

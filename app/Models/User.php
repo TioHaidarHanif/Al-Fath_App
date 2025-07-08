@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\Profile;
 use App\Models\Event;
 use App\Models\EventRegistration;
+use App\Models\Presence;
 
 class User extends Authenticatable
 {
@@ -101,5 +102,30 @@ class User extends Authenticatable
     public function eventRegistrations()
     {
         return $this->hasMany(EventRegistration::class);
+    }
+
+    /**
+     * Regenerate the QR code for the user.
+     */
+    public function regenerateQrCode()
+    {
+        
+        $this->update(['qr_code' => uniqid('qr_', true)]);
+    }
+
+    /**
+     * Get all presences for this user.
+     */
+    public function presences()
+    {
+        return $this->hasMany(Presence::class);
+    }
+
+    /**
+     * Get all presences where this user was the admin who scanned.
+     */
+    public function scannedPresences()
+    {
+        return $this->hasMany(Presence::class, 'admin_id');
     }
 }

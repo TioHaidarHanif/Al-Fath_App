@@ -70,6 +70,14 @@ class Event extends Model
     }
 
     /**
+     * Get all presence records for this event.
+     */
+    public function presences()
+    {
+        return $this->hasMany(Presence::class);
+    }
+
+    /**
      * Scope a query to only include active events.
      */
     public function scopeActive($query)

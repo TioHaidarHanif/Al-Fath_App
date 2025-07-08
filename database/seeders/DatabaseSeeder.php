@@ -14,5 +14,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(BlogCategorySeeder::class);
         $this->call(BlogSeeder::class);
+        $this->call(EventSeeder::class);
+        $this->call(EventRegistrationSeeder::class);
+        $this->call(UserSeeder::class);
     }
 }

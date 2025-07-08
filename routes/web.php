@@ -100,6 +100,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/events/{event}/registrations/{registration}', [App\Http\Controllers\EventRegistrationController::class, 'update'])->name('events.registrations.update');
     Route::delete('/events/{event}/registrations/{registration}', [App\Http\Controllers\EventRegistrationController::class, 'destroy'])->name('events.registrations.destroy');
     Route::post('/events/{event}/registrations/batch', [App\Http\Controllers\EventRegistrationController::class, 'batchUpdate'])->name('events.registrations.batch');
+
+    // Attendance and Scanning
+    Route::get('/events/{event}/presences', [App\Http\Controllers\EventController::class, 'presences'])->name('events.presences');
+    Route::get('/events/{event}/scan', [App\Http\Controllers\EventController::class, 'scan'])->name('events.scan');
+    Route::post('/events/{event}/process-scan', [App\Http\Controllers\EventController::class, 'processScan'])->name('events.process-scan');
 });
 
 // Public event routes

@@ -62,6 +62,12 @@ export default function Show({ auth, event, userRegistration, isPic, isCreator }
                                             <Link href={route('events.registrations.index', event.id)}>
                                                 <SecondaryButton>Manage Registrations</SecondaryButton>
                                             </Link>
+                                            <Link href={route('events.presences', event.id)}>
+                                                <SecondaryButton>Attendance</SecondaryButton>
+                                            </Link>
+                                            <Link href={route('events.scan', event.id)}>
+                                                <SecondaryButton>Scan QR</SecondaryButton>
+                                            </Link>
                                             {isCreator && (
                                                 <Link href={route('events.pics', event.id)}>
                                                     <SecondaryButton>Manage PICs</SecondaryButton>
